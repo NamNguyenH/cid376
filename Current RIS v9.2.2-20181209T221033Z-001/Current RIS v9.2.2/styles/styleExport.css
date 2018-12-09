@@ -1,0 +1,44 @@
+
+div{
+    margin: 2em;
+}
+
+#pdf-container{
+    background-color:#ffffff;
+    width: 800px;
+}
+
+.RIS-table{
+    background-color:#ffffff;
+    align-content: center;
+    border-collapse: collapse;
+    width: 100%;
+    table-layout: fixed;
+    word-wrap: break-word;
+    text-align: left;
+}
+
+table tr, table th{
+    border:1px solid black;
+}
+
+tr td{
+    border:1px solid black;
+    flex-flow: column;
+    width: fixed;
+    height: auto;
+    vertical-align: top;
+}
+
+tr{
+    width: inherit;
+}
+
+.table-container{
+    padding:0;
+}
+
+.RIS-group{
+    margin:auto;
+}
+    

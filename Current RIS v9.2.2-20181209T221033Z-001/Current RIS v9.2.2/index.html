@@ -1,0 +1,164 @@
+﻿<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>RIS Builder Evolved</title>
+		
+		<!--For Datepicker-->
+<!--        <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">-->
+        <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+        <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+        <!--End Of Datepicker-->
+		
+        <link rel="stylesheet" href="main.css">
+		<link rel="stylesheet" href="styles/style1.css">
+		<link rel="stylesheet" href="styles/jquery-ui-1.12.1.custom/jquery-ui.min.css">
+  <!--      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script> -->
+<!--		<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+        <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+-->    
+        
+        
+		<script src="main.js"></script>
+        
+        <script>
+			// try code
+			$( function() {
+				$( "#accordion" ).accordion({
+					header: "> div > h3",
+					collapsible: true
+				})
+				.sortable({
+					axis: "y",
+					handle: "h3",
+					stop: function( event, ui ) {
+					  // IE doesn't register the blur when sorting
+					  // so trigger focusout handlers to remove .ui-state-focus
+					  ui.item.children( "h3" ).triggerHandler( "focusout" );
+
+					  // Refresh accordion to handle new order
+					  $( this ).accordion( "refresh" );
+					}
+				  });
+			} );
+			// end of try code
+        </script>
+        
+    </head>
+    <body>
+    	<div id="page">
+	        <header>
+	        	<h1 id="Web-Logo">RIS Builder Evolved</h1><br>
+	        	<button class="nav-bnt" id="myBtn">Add a Sheet</button>
+				<button class="nav-bnt" id="exportProject-btn">Export Project</button>
+				<span style="float:right; " id="spanDeleteAll" >
+					 <button title="Delete All" onclick="deleteAll();" style="background-color:red;" >Delete All</button></span>
+		
+	        </header>
+            <div id="main">
+                <h2 id="welcomeMessage">Welcome to RIS Builder Evolved! Click "Add a Sheet" to begin. If you need help, click "Help" below.</h2>
+            </div>
+			<!-- The Modal -->
+			<div id="myModal" class="modal">
+
+			  <!-- Modal content -->
+			  <div class="modal-content">
+				<div class="modal-header">
+				  <span class="close">&times</span>
+				  <h2>Add a Sheet</h2>
+				  <div id="saveMsg" style="float: right; color: #ccc; padding-top: 10px; display:none;">Saved</div>
+				</div>
+				<div class="modal-body">
+				  <form id="RISForm">
+                      <label>Risk ID:</label>
+                      <input type="text" name="riskID" id="riskID" maxlength="15" ><br>
+					  <label>Date:</label>
+					  <input name="date" class="date" id="date"  pattern="(0[1-9]|1[012])[- /.](0[1-9]|[12][0-9]|3[01])[- /.](19|20)\d\d"><br>
+					  <label>Probability:</label>
+					  <input type="number" name="Probability" id="Probability" onchange="(function(el){el.value=parseFloat(el.value).toFixed(2);})(this)"  min="0" max="1" step="0.01"><br>
+					  <label>Impact:</label>
+					  <select id="Impact" name="Impact" id="Impact" >
+						  <option value="Very High">Very High</option>
+						  <option value="High">High</option>
+						  <option value="Low">Low</option>
+						  <option value="Very Low">Very Low</option>
+					  </select><br><br>
+					  <label>Description:</label>
+					  <textarea rows="6" cols="50" name="description" id="description" maxlength="500" ></textarea><br><br>
+					  <label>Refinement/context:</label>
+					  <textarea rows="3" cols="21" name="Refinement-context" id="Refinement-context" maxlength="700" ></textarea><br><br>
+					  <label>Mitigation/monitoring:</label>
+					  <textarea rows="3" cols="21" name="Mitigation-monitoring" id="Mitigation-monitoring" maxlength="700" ></textarea><br><br>
+					  <label>Management/contingency:</label>
+					  <textarea rows="3" cols="21" name="Management-contingency" id="Management-contingency" maxlength="500" ></textarea><br>
+					  <label>Trigger:</label>
+					  <input type="text" name="Trigger" id="Trigger" maxlength="150" ><br>
+					  <label>Current status:</label>
+					  <input type="text" name="Current-status" id="Current-status" maxlength="50" >
+					  <input name="Current-status-date" class="date"  id="Current-status-date"  pattern="(0[1-9]|1[012])[- /.](0[1-9]|[12][0-9]|3[01])[- /.](19|20)\d\d"><br>
+					  <label>Originator:</label>
+					  <input type="text" name="Originator" id="Originator" maxlength="20" ><br>
+					  <label>Assigned by:</label>
+					  <input type="text" name="Assigned-by" id="Assigned-by" maxlength="20" ><br>
+					  <input class="modal-btn" id="submitBTN" type="submit" value="Save">
+                      <input class="modal-btn" id="cancelBTN" type="button" value="Cancel">
+                  </form>
+				</div>
+
+			  </div>
+
+			</div>
+			<!-- End of The Modal -->
+			<!--Moe's Code-->
+			<div id="accordion">
+				<!--<div class="RIS-group">
+					<h3>Risk ID: 234234</h3>
+					<div class="table-container">
+						<table class="RIS-table">
+							<col width=25%>
+							<col width=25%>
+							<col width=25%>
+							<col width=25%>
+							<tr>
+								<td>Risk ID: </td>
+								<td>Date: </td>
+								<td>Probability: </td>
+								<td>Impact: </td>
+							</tr>
+							<tr>
+								<td colspan="4">Description: </td>
+							</tr>
+							<tr>
+								<td colspan="4">Refinement/Context: </td>
+							</tr>
+							<tr>
+								<td colspan="4">Mitigation/Monitoring: </td>
+							</tr>
+							<tr>
+								<td colspan="4">Management/Contingency/Trigger: </td>
+							</tr>
+							<tr>
+								<td colspan="4">Current Status:</td>
+							</tr>
+							<tr>
+								<td colspan="2">Originator: </td>
+								<td colspan="2">Assigned: </td>
+							</tr>
+						</table>
+					</div>
+				</div>  End of RIS-group -->
+			</div> <!-- End of Accordion -->
+			<!--End of Moe's Code-->
+			
+			<!--<p id="note-warning">Note: closing this page will lose all progress</p>-->
+            
+	        <footer>
+                <a href="about.html" target="_blank">About</a>
+                <a href="help.html" target="_blank">Help</a><br>
+	        	<p>&copy; 2016 All Rights Reserved | UM-Dearborn</p>
+	        </footer>
+
+	    </div>
+	</body>
+</html>
+

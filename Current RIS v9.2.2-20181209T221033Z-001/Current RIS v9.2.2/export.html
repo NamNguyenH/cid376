@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang = "en">
+    <head>
+        <meta charset="utf-8">
+        <title>CIS375</title>
+        
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+		<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+        <script src="html2canvas.js"></script> <!-- library needed for rendering html in pdf export -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.2/jspdf.debug.js"></script> <!-- library for pdf export -->
+        <script src="canvas2image.js"></script> <!-- library needed for rendering html in pdf export -->
+        <span id="stylePlaceholder"> </span>
+
+        <script>
+            $(document).ready(function(){
+                // Receiving the data:
+                var tables = JSON.parse(localStorage.getItem("_tables"));   // Get tables from previous page, store them into 'tables'
+                var firstCheck = true;
+                var nullCheck ="";
+                for(var i = 0; i < tables.length ; i++)
+                    {
+                        nullCheck = tables[i];
+                        if (firstCheck)
+                            {   
+                                if (typeof tables[i] != 'undefined' && tables[i] != null && nullCheck != 'null') // Means this index has been deleted
+                                { 
+                                    $("#pdf-container").html(tables[i]);
+                                    firstCheck = false;
+                                }
+                            }
+                        else{
+                                if (typeof tables[i] != 'undefined' && tables[i] != null && nullCheck != 'null')
+                                { 
+                                    $("#pdf-container").html($("#pdf-container").html() + tables[i]);
+                                }
+                        }
+                        
+                        nullCheck = "";
+                        
+                    };
+                
+                $('#stylePlaceholder').append('<link rel="stylesheet" href="styles/styleExport.css">');
+
+                html2canvas($("#pdf-container"), {
+//                    onrendered: function(canvas) {         
+//                        var imgData = canvas.toDataURL('image/png'); 
+//                        $("#imgRes").attr("src", imgData);             
+//                        var doc = new jsPDF("1", "pt", "letter");
+//                        doc.addImage(imgData, 'PNG', 20, 20); // Image position, and scaling
+//                        doc.save("RIS.pdf");
+//                    }
+                    onpreloaded: function(){
+                          $("#barra").hide(); 
+                    },
+                    onrendered: function(canvas) {
+                        $("#page").hide();
+                        var imgData = canvas.toDataURL('image/jpeg');              
+                        options = {
+                            orientation: "0",
+                            unit: "mm",
+                            format: "a4"
+                        };
+                        var doc = new jsPDF(options, '', '', '');
+                        doc.addImage(imgData, 'jpeg', 10, 10, 190, 0);  // test parameters
+                        var corte = 1328; // configura tamanho do corte
+                        var image = new Image();
+                        image = Canvas2Image.convertToJPEG(canvas);
+
+                        var croppingYPosition = corte;
+                        var count = (image.height)/corte;
+                        
+
+                        for (var i =1; i < count; i++) {
+                                doc.addPage();
+                                var sourceX = 0;
+                                var sourceY = croppingYPosition;
+                                var sourceWidth = image.width;
+                                var sourceHeight = corte;
+                                var destWidth = sourceWidth;
+                                var destHeight = sourceHeight;
+                                var destX = 0;
+                                var destY = 0;
+                                var canvas1 = canvas;
+                                canvas1.setAttribute('height', (image.height)-(corte*i));
+                                canvas1.setAttribute('width', destWidth);                         
+                                var ctx = canvas1.getContext("2d");
+                                ctx.drawImage(image, sourceX, 
+                                                     sourceY,
+                                                     sourceWidth,
+                                                     sourceHeight, 
+                                                     destX, 
+                                                     destY, 
+                                                     destWidth, 
+                                                     destHeight);
+                                var image2 = new Image();
+                                image2 = Canvas2Image.convertToJPEG(canvas1);
+                                image2Data = image2.src;
+                                doc.addImage(image2Data, 'JPEG', 10, 10, 190, 0);
+                                croppingYPosition += destHeight;              
+                            }     
+
+
+                        doc.save('sample-file.pdf');
+                        $('canvas').remove();
+                        $('canvas1').remove();
+                        $("#page").show();
+                        $("#barra").show();
+                    }
+                 });
+            });
+        </script>
+    
+    </head>
+    <body>
+        <div id="pdf-container"> 
+          <!-- RIS Tables are stored here --> 
+        </div>
+    </body>
+        
+</html>
